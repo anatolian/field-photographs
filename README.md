@@ -8,7 +8,7 @@ These Android apps were designed to ease photograph file management on archaeolo
 2. A photograph is taken with the Android smartphone, tablet, or camera.
 3. Upon acceptance of the photograph or group of photographs, the photograph files are renamed and placed into an appropriate location on the filesystem, based on the selected metadata.  The final location may either be on the local storage of the Android device, or uploaded over the network to a central server via a web service.
 
-Although initially developed for the data structures of Boston University's Gygaia Projects (www.gygaia.org), the simplicity of the workflow should allow adaptation to many situations.
+These apps initially developed for the data structures of Boston University's Gygaia Projects (www.gygaia.org). The simplicity of the workflow should allow adaptation to many situations.
 
 ## subprojects
 
