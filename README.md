@@ -13,7 +13,6 @@ These apps initially developed for the data structures of Boston University's Gy
 ## subprojects
 
 excavation/app
-
 excavation/webservice
 
 This app was designed for an archaeological excavation and incorporates three different program flows.  The first takes individual photographs of excavated archaeological contexts, the second collects a batch of photographs for 3d photogrammetry processing, and the third enables multiple photographs of archaeological samples, such as ceramics or lithics.  The app depends on the php webservice both to provide the archaeological metadata for users to select, as well as to upload the resultant photograph files.  Network connectivity is assumed at all times.
