@@ -19,6 +19,6 @@ This app was designed for an archaeological excavation and incorporates three di
 
 * survey/app
 
-This app was designed for archaeological field surface survey and has one program flow.  A user locally enters the survey unit identification, and then can photograph either pictures of the field being surveyed, or the bag of samples collected from the field.  Photograph files are stored locally on the Android device, enabling offline use.
+This app was designed for archaeological field surface survey and has one program flow.  A user locally enters the survey unit identification, and then can photograph either pictures of the field being surveyed, or the bag of samples collected from the field.  Photograph files are stored locally on the Android device, enabling offline usage.
 
 
