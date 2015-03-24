@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import java.io.File;
@@ -38,17 +39,18 @@ public class MainActivity extends Activity {
     public final static int BAGCODE = 101;
     public final static int FIELDCODE = 100;
     public final static String DEFAULTSAVEPATH = "/SUPhotos/";
+    public final static int PHOTOCOUNTERDEFAULT = 300;
+    public final static int BAGPHOTOID = 299;
 
-    public  String getSave_path() {
-        return this.save_path;
-    }
-
-    public void setSave_path(String save_path) {
-       this.save_path = save_path;
-        Log.v("Survey App", "set save path: " + this.save_path);
-    }
 
     private String save_path = DEFAULTSAVEPATH;
+    DrawView bagPhoto = null;
+    public ArrayList<ImageView> photoList =  new ArrayList<>();
+    RelativeLayout mainLayout;
+    private int photoIdCounter = PHOTOCOUNTERDEFAULT;
+    private boolean isThumbnailCreation;
+
+
 
     public boolean isThumbnailCreation() {
         return isThumbnailCreation;
@@ -57,10 +59,14 @@ public class MainActivity extends Activity {
     public void setThumbnailCreation(boolean isThumbnailCreation) {
         this.isThumbnailCreation = isThumbnailCreation;
     }
+    public  String getSave_path() {
+        return this.save_path;
+    }
 
-    private boolean isThumbnailCreation;
-
-    public ArrayList<String> photoList =  new ArrayList<>();
+    public void setSave_path(String save_path) {
+        this.save_path = save_path;
+        Log.v("Survey App", "set save path: " + this.save_path);
+    }
 
     public String[] getRelevantYears(int currentYear) {
         int initialYear = currentYear - 3;
@@ -115,14 +121,72 @@ public class MainActivity extends Activity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 EditText fieldPhotoNumberTxt = (EditText) findViewById(R.id.fieldPhotoNumber2);
                 fieldPhotoNumberTxt.setText("1");
-                clearImages();
+                photoList = clearPhotos(mainLayout, photoList);
             }
         });
 
+        mainLayout = (RelativeLayout) findViewById(R.id.mainLayout);
 
     }
 
 
+    public void addPhotoToList(ImageView aPhoto, ArrayList<ImageView> aPhotoList) {
+        aPhoto.setId(photoIdCounter++);
+        aPhotoList.add(aPhoto);
+    }
+
+    public View addPhotoToEnd(RelativeLayout aLayout, ImageView anImage, View previousImage) {
+        RelativeLayout.LayoutParams imageDetails = new RelativeLayout.LayoutParams(
+          340, 255
+        );
+        imageDetails.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        imageDetails.addRule(RelativeLayout.BELOW, previousImage.getId());
+        imageDetails.setMargins(0,20,0,0);
+
+        aLayout.addView(anImage, imageDetails);
+        return anImage;
+    }
+
+    public void arrangePhotoListInLayout(RelativeLayout aLayout, ArrayList<ImageView> images, View topAttachedView) {
+        images.trimToSize();
+        Log.v("Survey App", "number of photos : " + images.size());
+
+        for(ImageView aPhoto : images) {
+            aLayout.removeView(aPhoto);
+        }
+        if(bagPhoto != null) {
+            aLayout.removeView(bagPhoto);
+            addPhotoToEnd(aLayout, bagPhoto, topAttachedView);
+            topAttachedView = bagPhoto;
+        }
+
+        for(int i = 0; i < images.size(); i++) {
+            if(i == 0) {
+                addPhotoToEnd(aLayout, images.get(0), topAttachedView);
+            } else {
+                addPhotoToEnd(aLayout, images.get(i), images.get(i - 1));
+            }
+        }
+    }
+
+    public void clearBagPhoto(RelativeLayout aLayout) {
+        if(bagPhoto != null) {
+            aLayout.removeView(bagPhoto);
+            bagPhoto = null;
+        }
+    }
+
+    public ArrayList<ImageView> clearPhotos(RelativeLayout aLayout, ArrayList<ImageView> photos) {
+        for(ImageView aPhoto : photos) {
+            aLayout.removeView(aPhoto);
+            aPhoto = null;
+        }
+
+        clearBagPhoto(aLayout);
+
+        photoIdCounter = PHOTOCOUNTERDEFAULT;
+        return new ArrayList<>();
+    }
 
     public void goToSettings(View view) {
         Intent myIntent = new Intent(this, Settings.class);
@@ -142,7 +206,7 @@ public class MainActivity extends Activity {
         EditText suSeqNumTxt = (EditText) findViewById(R.id.suSeqNum2);
         EditText fieldPhotoNumberTxt = (EditText) findViewById(R.id.fieldPhotoNumber2);
 
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        Intent intent = new Intent(this, TakePhotographActivity.class);
 
 
         intent.putExtra(SU_YEAR, suYearTxt);
@@ -169,7 +233,7 @@ public class MainActivity extends Activity {
         EditText suSeqNumTxt = (EditText) findViewById(R.id.suSeqNum2);
         EditText fieldPhotoNumberTxt = (EditText) findViewById(R.id.fieldPhotoNumber2);
 
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        Intent intent = new Intent(this, TakePhotographActivity.class);
 
         intent.putExtra(SU_YEAR, suYearTxt);
         intent.putExtra(SU_SEQNUM, suSeqNumTxt.getText().toString());
@@ -183,26 +247,36 @@ public class MainActivity extends Activity {
         //}
     }
 
+    private void createOrReplaceBagPhoto(Uri anUri) {
+        clearBagPhoto(mainLayout);
+        bagPhoto = new DrawView(this);
+        bagPhoto.setImageURI(anUri);
+        bagPhoto.setId(BAGPHOTOID);
+    }
+
+    private int increaseFieldPhotoNumberAndReturnOldNumber(EditText anEditText) {
+        int tempNumber =  Integer.parseInt(anEditText.getText().toString().trim());
+        anEditText.setText((tempNumber+1) + "");
+        return tempNumber;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //	boolean result = data.getBooleanExtra("result", false);
         Spinner mySpinner=(Spinner) findViewById(R.id.spinner2);
         String suYearTxt = mySpinner.getSelectedItem().toString();
         EditText suSeqNumTxt = (EditText) findViewById(R.id.suSeqNum2);
         EditText fieldPhotoNumberTxt = (EditText) findViewById(R.id.fieldPhotoNumber2);
+        Log.v("ActivityResult" , "asdfsda");
+        if (resultCode == RESULT_OK) {
+            Log.v("ActivityResult" , "RESULT_OK " + resultCode + "edfasdf");
 
-
-
-        if (resultCode == RESULT_OK)
-        {
-            if (requestCode == FIELDCODE)
-            {
+            if(requestCode == FIELDCODE) { // field photo
                 Log.v("ActivityResulty", getSave_path());
-                String path = Environment.getExternalStorageDirectory().getPath().toString() + getSave_path() + suYearTxt + "/" +  suSeqNumTxt.getText().toString() + "/fld/" + "1_pic_" + fieldPhotoNumberTxt.getText().toString() + ".jpg";
+                int fieldPhotoNumber = increaseFieldPhotoNumberAndReturnOldNumber(fieldPhotoNumberTxt);
+                String path = Environment.getExternalStorageDirectory().getPath().toString() + getSave_path() + suYearTxt + "/" +  suSeqNumTxt.getText().toString() + "/fld/" + "1_pic_" + fieldPhotoNumber + ".jpg";
                 String thumbPath = Environment.getExternalStorageDirectory().getPath().toString() + getSave_path() + "tmb/" + suYearTxt + "/" +  suSeqNumTxt.getText().toString() + "/fld";
-                File thumbFile = new File(thumbPath, "1_pic_" + fieldPhotoNumberTxt.getText().toString() + ".jpg");
+                File thumbFile = new File(thumbPath, "1_pic_" + fieldPhotoNumber + ".jpg");
 
                 if(isThumbnailCreation()) {
                     Bitmap ThumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path), 300, 225);
@@ -217,47 +291,19 @@ public class MainActivity extends Activity {
                     }
 
                 }
-                String photoNum = fieldPhotoNumberTxt.getText().toString();
-                int fieldPhotoNumber = Integer.parseInt(photoNum);
-
-
-                ImageView imageView = (ImageView) findViewById(R.id.picture1);
-
-                if (fieldPhotoNumber == 1)
-                {
-                    ++fieldPhotoNumber;
-                    fieldPhotoNumberTxt.setText(String.valueOf(fieldPhotoNumber));
-                } else if (fieldPhotoNumberTxt.getText().toString().equals("2"))
-                {
-                    imageView = (ImageView) findViewById(R.id.picture2);
-                    fieldPhotoNumberTxt.setText("3");
-                }else if (fieldPhotoNumberTxt.getText().toString().equals("3"))
-                {
-                    imageView = (ImageView) findViewById(R.id.picture3);
-                    fieldPhotoNumberTxt.setText("4");
-                }else if (fieldPhotoNumberTxt.getText().toString().equals("4"))
-                {
-                    imageView = (ImageView) findViewById(R.id.picture4);
-                    fieldPhotoNumberTxt.setText("5");
-                }else if (fieldPhotoNumberTxt.getText().toString().equals("5"))
-                {
-                    imageView = (ImageView) findViewById(R.id.picture5);
-                    fieldPhotoNumberTxt.setText("6");
+                ImageView aPhoto = new ImageView(this);
+                if(isThumbnailCreation()) {
+                    aPhoto.setImageURI(Uri.fromFile(thumbFile));
+                } else {
+                    aPhoto.setImageURI(Uri.parse(path));
                 }
 
 
-                if (fieldPhotoNumber > 5)
-                {
-                    ++fieldPhotoNumber;
-                    fieldPhotoNumberTxt.setText(String.valueOf(fieldPhotoNumber));
-                }
-                else
-                {
-                    if(isThumbnailCreation()) {
-                        imageView.setImageURI(Uri.fromFile(thumbFile));
-                    }
-                }
-            } else if (requestCode == BAGCODE) {
+
+                addPhotoToList(aPhoto, photoList);
+                arrangePhotoListInLayout(mainLayout, photoList, findViewById(R.id.space3));
+
+            } else if(requestCode == BAGCODE) { // bag photo
                 Log.v("ActivityResulty", getSave_path());
                 String path = Environment.getExternalStorageDirectory().getPath().toString() + getSave_path() + suYearTxt + "/" +  suSeqNumTxt.getText().toString() + "/fnd/" + "1_bag_1.jpg";
                 String thumbPath = Environment.getExternalStorageDirectory().getPath().toString() + getSave_path() + "tmb/" + suYearTxt + "/" +  suSeqNumTxt.getText().toString() + "/fnd";
@@ -276,19 +322,16 @@ public class MainActivity extends Activity {
                     }
                 }
 
-                ImageView imageView = (ImageView) findViewById(R.id.pictureBag);
                 if(isThumbnailCreation()) {
-                    imageView.setImageURI(Uri.fromFile(thumbFile));
+                    createOrReplaceBagPhoto(Uri.fromFile(thumbFile));
+                } else {
+                    createOrReplaceBagPhoto(Uri.parse(path));
                 }
-
+                arrangePhotoListInLayout(mainLayout, photoList, findViewById(R.id.space3));
             }
-
         }
 
     }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -308,21 +351,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void clearImages()
-    {
-        ImageView imageView = (ImageView) findViewById(R.id.picture1);
-        imageView.setImageDrawable(null);
-        imageView = (ImageView) findViewById(R.id.picture2);
-        imageView.setImageDrawable(null);
-        imageView = (ImageView) findViewById(R.id.picture3);
-        imageView.setImageDrawable(null);
-        imageView = (ImageView) findViewById(R.id.picture4);
-        imageView.setImageDrawable(null);
-        imageView = (ImageView) findViewById(R.id.picture5);
-        imageView.setImageDrawable(null);
-        imageView = (ImageView) findViewById(R.id.pictureBag);
-        imageView.setImageDrawable(null);
-    }
+
 
 
 }

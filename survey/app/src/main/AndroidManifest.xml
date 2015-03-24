@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".DisplayMessageActivity"
+            android:name=".TakePhotographActivity"
             android:label="@string/title_activity_display_message">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

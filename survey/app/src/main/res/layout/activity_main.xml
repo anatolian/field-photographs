@@ -10,7 +10,9 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:id="@+id/mainLayout"
+            android:nestedScrollingEnabled="false">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -48,7 +50,8 @@
                 android:layout_alignLeft="@+id/fieldPhotoNumber2"
                 android:layout_alignStart="@+id/fieldPhotoNumber2"
                 android:layout_alignRight="@+id/fieldPhotoNumber2"
-                android:layout_alignEnd="@+id/fieldPhotoNumber2" />
+                android:layout_alignEnd="@+id/fieldPhotoNumber2"
+                android:inputType="numberDecimal" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -66,7 +69,8 @@
                 android:ems="10"
                 android:id="@+id/fieldPhotoNumber2"
                 android:layout_below="@+id/textView3"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:editable="false" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -109,50 +113,6 @@
                 android:layout_below="@+id/button2"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/space3" />
-
-            <ImageView
-                android:layout_width="340px"
-                android:layout_height="255px"
-                android:id="@+id/picture1"
-                android:layout_below="@+id/space3"
-                android:layout_centerHorizontal="true" />
-
-            <ImageView
-                android:layout_width="340px"
-                android:layout_height="255px"
-                android:id="@+id/picture2"
-                android:layout_below="@+id/picture1"
-                android:layout_centerHorizontal="true" />
-
-            <ImageView
-                android:layout_width="340px"
-                android:layout_height="255px"
-                android:id="@+id/picture3"
-                android:layout_below="@+id/picture2"
-                android:layout_centerHorizontal="true" />
-
-            <ImageView
-                android:layout_width="340px"
-                android:layout_height="255px"
-                android:id="@+id/picture4"
-                android:layout_alignParentBottom="false"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/picture3" />
-
-            <ImageView
-                android:layout_width="340px"
-                android:layout_height="255px"
-                android:id="@+id/picture5"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/picture4" />
-
-            <ImageView
-                android:layout_width="340px"
-                android:layout_height="255px"
-                android:id="@+id/pictureBag"
-                android:layout_alignParentBottom="false"
-                android:layout_below="@+id/picture5"
-                android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
 </ScrollView>
