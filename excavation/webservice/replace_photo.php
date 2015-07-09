@@ -7,7 +7,7 @@
 	$area_north=$_REQUEST['area_north'];
 	$context_number=$_REQUEST['context_number'];
 	$photograph_number=$_REQUEST['photograph_number'];
-	$samba_share_path=GetValue('options.procedure_properties','property_value','property','samba_share_path');
+	$samba_share_path=GetValue('options.procedure_properties','property_value','property','base_image_path');
 	$context_subpath=GetValue('options.procedure_properties','property_value','property','context_subpath');
 	$upload_directory=$samba_share_path."/".$context_subpath;
 	$area_easting_dir=$upload_directory."/".$area_east;

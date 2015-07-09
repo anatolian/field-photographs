@@ -1,6 +1,5 @@
 <?php
 	//header('Content-type: application/json');
-
 	include('connect.php');
 	$mode=$_REQUEST['mode']; // User can pass context, sample, material in the arguments.
 	$listing_type=$_REQUEST['listing_type'];
@@ -25,7 +24,7 @@
 	}
 	if($listing_type=='context' && $mode =='list' && $listing_type !='' && $mode != '' && $area_east != '' && $area_north != '' ){
 		$date=date('Y-m-d');
-		$select_listing_type="select context_number  FROM excavation.contexts_spatial where area_easting=".$area_east." and area_northing=".$area_north." ";
+		$select_listing_type="select context_number  FROM excavation.contexts_spatial where area_easting=".$area_east." and area_northing=".$area_north." ORDER BY context_number";
 		//select context_number from excavation.contexts_spatial_photographs  where area_easting='1' and area_northing='1'
 		if($photograph_number != '')
 		{
@@ -47,7 +46,7 @@
 		}
 	}
 	if($listing_type=='sample' && $mode =='list' && $area_east != '' && $area_north != '' && $context_number != ''){
-		$select_listing_type_sample="select sample_number from samples.samples where area_easting=".$area_east." and area_northing=".$area_north." and context_number=".$context_number;
+		$select_listing_type_sample="select sample_number from samples.samples where area_easting=".$area_east." and area_northing=".$area_north." and context_number=".$context_number." ORDER by sample_number";
 		$select_listing_type_sample_res=pg_query($select_listing_type_sample);
 		$count=0;
 		while($row_data_sample = pg_fetch_array($select_listing_type_sample_res))
