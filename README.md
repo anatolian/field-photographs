@@ -1,3 +1,5 @@
+**Disclaimer: ** This application was coded by an inexpensive freelance company.  It was written quickly and for a very specific purpose, and it has fulfilled this purpose during multiple archaeological field seasons.  However, the quality of the code leaves much to be desired and the application could be more robust.  For those who wish to contribute to archaeological research, pull requests that help to improve the program would definitely be welcomed.  Since each archaeological project's data structure tends to be unique, the purpose of publishing this code was less to provide software for ready download and use, and more as an example of potential workflows and perhaps as a code base that could be adapted, with much effort, to other projects.
+
 ## field-photographs
 
 These Android apps were designed to ease photograph file management on archaeological projects.  The goal is to rename and place photographs on the filesystem in a structured manner, as the photographs are captured in the field.  Photograph file names are set based upon associated archaeological metadata, so that data viewing applications can easily connect the data with the image file.
